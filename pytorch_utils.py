@@ -358,18 +358,17 @@ def val_epoch(val_loader, model, criterion): #temperature 1
 def trainer(big_model, small_model, T, criterion, optimizer, scheduler,
             loaders, 
             nb_epochs=50,
-            patience=10, save_every=5,
+            patience=10, save_every=10,
             model_ckpt_name='model-epoch{epoch:02d}.t7', model_best_name='model.best.t7',
             scheduler_arg='loss'): # 'loss' or 'epoch'
     train_loader, val_loader = loaders
 
     best_loss = (float('Inf'), -1)
     best_acc = (0, -1)
-    print("best_acc",best_acc)
-    print("best_acc_type",type(best_acc))
 
     last_update = -1
     pbar = tqdm.tqdm(range(nb_epochs))
+
     for epoch in pbar:
         if scheduler_arg == 'epoch':
             scheduler.step(epoch)
