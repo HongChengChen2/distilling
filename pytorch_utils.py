@@ -11,7 +11,7 @@ from sklearn.metrics import f1_score, precision_recall_fscore_support
 # For NO REASON PyTorch v0.2 doesn't actually come with this???
 from torch.optim import Optimizer
 from bisect import bisect_right
-from torch.nn import Softmax
+import torch.nn.functional as F
 
 data_path = "/home/leander/hcc/prunWeight/data4"
 
