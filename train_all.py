@@ -51,10 +51,10 @@ def main():
     	'resnet152': models.resnet152(pretrained=True)
     }
     model_params = [
-            ('trn2', []),
-            ('trn4', [1]),
-            ('trn6', [1, 1]),
-            ('trn8', [1, 1, 1]),
+    		('trn2', []),
+    		('trn4', [1]),
+    		('trn6', [1, 1]),
+    		('trn8', [1, 1, 1]),
             ('trn10', [1, 1, 1, 1]),
             ('trn18', [2, 2, 2, 2]),
             ('trn34', [3, 4, 6, 3])]
