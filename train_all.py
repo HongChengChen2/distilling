@@ -68,7 +68,7 @@ def main():
 	if args.gpu is not None:
 		big_model = big_model.cuda(args.gpu) 
 	else:
-		if args.arch.startswith('alexnet') or args.arch.startswith('vgg'):
+		if args.model.startswith('alexnet') or args.model.startswith('vgg'):
 			big_model.features = torch.nn.DataParallel(big_model.features)
 			big_model.cuda()
 		else:
