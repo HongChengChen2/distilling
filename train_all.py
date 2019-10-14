@@ -76,9 +76,14 @@ def main():
 
 	if args.gpu is not None:
 		big_model = big_model.cuda(args.gpu) 
+		num_ftrs = big_model.fc.in_features
+		big_model.fc = nn.Linear(num_ftrs, 4)
 		small_model = small_model.cuda(args.gpu) 
+		
 	else:
 		big_model = torch.nn.DataParallel(big_model).cuda()
+		num_ftrs = big_model.module.fc.in_features
+		big_model.module.fc = nn.Linear(num_ftrs, 4)
 
 		if args.model.startswith('alexnet') :
 			small_model.features = torch.nn.DataParallel(small_model.features)
@@ -93,8 +98,7 @@ def main():
 		p.cuda(args.gpu)
 
     ##################
-	num_ftrs = big_model.module.fc.in_features
-	big_model.module.fc = nn.Linear(num_ftrs, 4)
+	
 	optimizer = optim.Adam(big_model.parameters(),lr=0.001)
 	criterion = nn.CrossEntropyLoss().cuda(args.gpu)
 	train_loader, val_loader = get_datasets()#train_fnames, val_fnames)

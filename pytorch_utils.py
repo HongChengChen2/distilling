@@ -449,13 +449,13 @@ def get_datasets(CLASS_NAMES=None,
             shuffle=False, pin_memory=True)
     '''
     train_transform = transforms.Compose([
-        transforms.RandomSizedCrop(RESOL),
+        transforms.RandomResizedCrop(RESOL),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean = [ 0.485, 0.456, 0.406 ], std = [ 0.229, 0.224, 0.225 ]),
         ])
     val_transform = transforms.Compose([
-        transforms.Scale(int(256.0 / 224.0 * RESOL)),
+        transforms.Resize(int(256.0 / 224.0 * RESOL)),
         transforms.CenterCrop(RESOL),
         transforms.ToTensor(),
         transforms.Normalize(mean = [ 0.485, 0.456, 0.406 ], std = [ 0.229, 0.224, 0.225 ]),
