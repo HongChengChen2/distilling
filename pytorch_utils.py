@@ -358,7 +358,7 @@ def val_epoch(val_loader, model, criterion): #temperature 1
 def trainer(big_model, small_model, T, criterion, optimizer, scheduler,
             loaders, 
             nb_epochs=50,
-            patience=5, save_every=5,
+            patience=10, save_every=5,
             model_ckpt_name='model-epoch{epoch:02d}.t7', model_best_name='model.best.t7',
             scheduler_arg='loss'): # 'loss' or 'epoch'
     train_loader, val_loader = loaders
@@ -378,8 +378,8 @@ def trainer(big_model, small_model, T, criterion, optimizer, scheduler,
         val_loss, val_acc = val_epoch(val_loader, small_model, criterion)
         pbar.set_description('val loss: %2.4f, val acc: %2.1f' % (val_loss, val_acc))
 
-        if val_loss < best_loss[0]:
-            best_loss = (val_loss, epoch)
+        if val_loss < best_loss[0]: 
+            best_loss = (val_loss, epoch) 
             last_update = epoch
         if val_acc > best_acc[0]:
             best_acc = (val_acc, epoch)
