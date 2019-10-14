@@ -95,7 +95,7 @@ def main():
     ##################
 	small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
 		conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
-	
+
 	train(big_model, small_model, args)
 
 
@@ -117,7 +117,7 @@ def train(big_model, small_model, args):
 
     RESOL = args.resol
     NB_CLASSES = 1000
-    print "Loading images..."
+    print("Loading images...")
     #train_fnames = load_all_data(TRAIN_PATH)
     #val_fnames = load_all_data(VAL_PATH)
 
