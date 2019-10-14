@@ -19,14 +19,9 @@ from torch.autograd import Variable
 #from pretrained_utils import get_relevant_classes
 import pytorch_resnet
 from pytorch_utils import *
-from torch.autograd import Variable
 import torch.utils.model_zoo as model_zoo
 import torch.nn.parallel
 import torch.backends.cudnn as cudnn
-import torch.distributed as dist
-import torch.utils.data
-import torch.utils.data.distributed
-import torchvision.datasets as datasets
 import functools
 import random 
 import csv
@@ -83,8 +78,7 @@ def main():
 		big_model = big_model.cuda(args.gpu) 
 		small_model = small_model.cuda(args.gpu) 
 	else:
-		big_model.cuda()
-		big_model = torch.nn.parallel.DistributedDataParallel(big_model)
+		big_model = torch.nn.DataParallel(big_model).cuda()
 
 		if args.model.startswith('alexnet') :
 			small_model.features = torch.nn.DataParallel(small_model.features)
