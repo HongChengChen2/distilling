@@ -66,22 +66,34 @@ def main():
 
 	big_model = pytorch_models['resnet18']
 
+	if args.model.startswith('trn'):
+		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
+			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
+	else
+		small_model = models.__dict__[args.model]()
+
 	if args.gpu is not None:
 		big_model = big_model.cuda(args.gpu) 
+		small_model = small_model.cuda(args.gpu) 
 	else:
-		if args.model.startswith('alexnet') or args.model.startswith('vgg'):
-			big_model.features = torch.nn.DataParallel(big_model.features)
-			big_model.cuda()
+		big_model.cuda()
+		big_model = torch.nn.parallel.DistributedDataParallel(big_model)
+
+		if args.model.startswith('alexnet') :
+			small_model.features = torch.nn.DataParallel(small_model.features)
+			small_model.cuda()
+			num_ftrs = small_model.classifier[6].in_features
+			small_model.classifier[6] = nn.Linear(num_ftrs, 4)
 		else:
-			big_model = torch.nn.DataParallel(big_model).cuda()
+			small_model = torch.nn.DataParallel(small_model).cuda()
 
 	for p in big_model.parameters():
 		p.requires_grad=False
 		p.cuda(args.gpu)
 
     ##################
-	num_ftrs = big_model.module.fc.in_features
-	big_model.module.fc = nn.Linear(num_ftrs, 4)
+	num_ftrs = big_model.fc.in_features
+	big_model.fc = nn.Linear(num_ftrs, 4)
 	optimizer = optim.Adam(big_model.parameters(),lr=0.001)
 	criterion = nn.CrossEntropyLoss().cuda(args.gpu)
 	train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
@@ -110,13 +122,7 @@ def main():
 	test_acc0 = validate(val_loader, big_model, criterion)
 
     ##################
-	#small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
-	#	conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
-	small_model = models.alexnet(pretrained=False)
-	small_model.features = torch.nn.DataParallel(small_model.features)
-	small_model.cuda()
-	num_ftrs = small_model.classifier[6].in_features
-	small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+
 
 	train(big_model, small_model, args)
 
