@@ -83,7 +83,8 @@ def main():
             #y=Variable(y,requires_grad=True)
 
 			if args.gpu is not None:
-				data = data.cuda(args.gpu, non_blocking=True)
+				
+			data = data.cuda(args.gpu, non_blocking=True)
 			y = y.cuda(args.gpu, non_blocking=True)
 			
 			out = big_model(data)
