@@ -61,7 +61,7 @@ def main():
 	name_to_params = dict(model_params)
 	big_model = pytorch_models['resnet18']
 	for p in big_model.parameters():
-    	p.requires_grad=False
+		p.requires_grad=False
 
     ##################
 	num_ftrs = big_model.fc.in_features
