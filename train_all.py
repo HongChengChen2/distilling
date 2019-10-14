@@ -61,6 +61,7 @@ def main():
     		('trn18', [2, 2, 2, 2]),
     		('trn34', [3, 4, 6, 3])]
 	name_to_params = dict(model_params)
+	
 	big_model = pytorch_models['resnet18']
 	for p in big_model.parameters():
 		p.requires_grad=False
@@ -70,6 +71,7 @@ def main():
 	num_ftrs = big_model.fc.in_features
 	big_model.fc = nn.Linear(num_ftrs, 4)
 	optimizer = optim.Adam(big_model.parameters(),lr=0.001)
+    criterion = nn.CrossEntropyLoss().cuda(args.gpu)
 	train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
 	
 	big_model.train(True)
