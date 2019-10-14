@@ -11,6 +11,7 @@ import torchvision.transforms as transforms
 import torchvision.models as models
 #import torchsample
 from PIL import Image
+from torch.autograd import Variable
 
 #import imagenet_utils
 #import common
