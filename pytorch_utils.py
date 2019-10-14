@@ -391,8 +391,8 @@ def trainer(big_model, small_model, T, criterion, optimizer, scheduler,
         if scheduler_arg == 'loss':
             scheduler.step(val_loss)
 
-    print 'Best loss: ' + str(best_loss)
-    print 'Best acc: ' + str(best_acc)
+    print('Best loss: ' + str(best_loss))
+    print('Best acc: ' + str(best_acc))
     return best_acc
 
 def get_datasets(CLASS_NAMES=None,
