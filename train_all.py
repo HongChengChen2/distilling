@@ -19,7 +19,14 @@ from torch.autograd import Variable
 #from pretrained_utils import get_relevant_classes
 import pytorch_resnet
 from pytorch_utils import *
+from torch.autograd import Variable
 import torch.utils.model_zoo as model_zoo
+import torch.nn.parallel
+import torch.backends.cudnn as cudnn
+import torch.distributed as dist
+import torch.utils.data
+import torch.utils.data.distributed
+import torchvision.datasets as datasets
 import functools
 import random 
 import csv
