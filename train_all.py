@@ -50,7 +50,6 @@ def main():
     	'resnet101': models.resnet101(pretrained=True),
     	'resnet152': models.resnet152(pretrained=True)
     }
-
     model_params = [
             ('trn2', []),
             ('trn4', [1]),
@@ -63,11 +62,11 @@ def main():
 
     big_model = pytorch_models['resnet18']
     for p in big_model.parameters():
-        p.requires_grad=False
+    	p.requires_grad=False
 
     ##################
     num_ftrs = big_model.fc.in_features
-    model.fc = nn.Linear(num_ftrs, 4) #only train the last layer
+    big_model.fc = nn.Linear(num_ftrs, 4) #only train the last layer
     
     optimizer = optim.Adam(big_model.parameters(),lr=0.001)
     train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
@@ -84,7 +83,7 @@ def main():
                 data = data.cuda(args.gpu, non_blocking=True)
             y = y.cuda(args.gpu, non_blocking=True)
 
-            out = model(data)
+            out = big_model(data)
 
             #print(out)
             loss=criterion(out,y)
