@@ -64,6 +64,7 @@ def main():
 	big_model = pytorch_models['resnet18']
 	for p in big_model.parameters():
 		p.requires_grad=False
+		p.cuda(args.gpu)
 
     ##################
 	num_ftrs = big_model.fc.in_features
