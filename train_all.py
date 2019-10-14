@@ -220,7 +220,7 @@ def accuracy(output, target):
         _, pred = output.topk(1, 1, True, True) 
         pred = pred.t() # a zhuanzhi transpose xcol 5row
         correct = pred.eq(target.view(1, -1).expand_as(pred)) #expend target to pred
-        correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+        correct_k = correct[:1].view(-1).float().sum(0, keepdim=True)
         acc = correct_k.mul_(100.0 / batch_size)
         return acc
 
