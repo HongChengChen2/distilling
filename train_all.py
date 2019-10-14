@@ -2,6 +2,7 @@ import argparse
 import glob
 import itertools
 import os
+import time
 import torch
 import pandas as pd
 import numpy as np
@@ -37,7 +38,7 @@ parser.add_argument('--resol', default=224, type=int, help="Resolution")
 parser.add_argument('--temp', required=True, help="Softmax temperature")
 parser.add_argument('--gpu', default=None, type=int,
                 help='GPU id to use.')  
-parser.add_argument('--epochs', default=90, type=int, metavar='N',
+parser.add_argument('--epochs', default=10, type=int, metavar='N',
                     help='number of total epochs to run')
 
 
@@ -63,6 +64,16 @@ def main():
 	name_to_params = dict(model_params)
 
 	big_model = pytorch_models['resnet18']
+
+	if args.gpu is not None:
+		big_model = big_model.cuda(args.gpu) 
+	else:
+		if args.arch.startswith('alexnet') or args.arch.startswith('vgg'):
+			big_model.features = torch.nn.DataParallel(big_model.features)
+			big_model.cuda()
+		else:
+			big_model = torch.nn.DataParallel(big_model).cuda()
+
 	for p in big_model.parameters():
 		p.requires_grad=False
 		p.cuda(args.gpu)
