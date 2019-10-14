@@ -40,7 +40,7 @@ parser.add_argument('--resol', default=224, type=int, help="Resolution")
 parser.add_argument('--temp', required=True, help="Softmax temperature")
 parser.add_argument('--gpu', default=None, type=int,
                 help='GPU id to use.')  
-parser.add_argument('--epochs', default=10, type=int, metavar='N',
+parser.add_argument('--epochs', default=50, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--print-freq', '-p', default=1, type=int,
                     metavar='N', help='print frequency (default: 1)')
@@ -66,7 +66,7 @@ def main():
     		('trn34', [3, 4, 6, 3])]
 	name_to_params = dict(model_params)
 
-	big_model = pytorch_models['resnet50']
+	big_model = pytorch_models['resnet18']
 
 	if args.model.startswith('trn'):
 		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
