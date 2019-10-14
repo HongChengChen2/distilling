@@ -56,10 +56,10 @@ def main():
     		('trn4', [1]),
     		('trn6', [1, 1]),
     		('trn8', [1, 1, 1]),
-            ('trn10', [1, 1, 1, 1]),
-            ('trn18', [2, 2, 2, 2]),
-            ('trn34', [3, 4, 6, 3])]
-    name_to_params = dict(model_params)
+    		('trn10', [1, 1, 1, 1]),
+    		('trn18', [2, 2, 2, 2]),
+    		('trn34', [3, 4, 6, 3])]
+	name_to_params = dict(model_params)
 
     big_model = pytorch_models['resnet18']
     for p in big_model.parameters():
