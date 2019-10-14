@@ -12,9 +12,11 @@ from torch.optim import Optimizer
 from bisect import bisect_right
 from torch.nn import Softmax
 
-TRAIN_PATH = "/mnt/disks/imagenet/ILSVRC2012_img_train"
+data_path = "/home/leander/hcc/prunWeight/data4"
+
+TRAIN_PATH = os.path.join(data_path, 'train/')
 #TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
-VAL_PATH = "/mnt/disks/imagenet/ILSVRC2012_img_val/"
+VAL_PATH = os.path.join(data_path, 'val/')
 #VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
 
 class _LRScheduler(object):
