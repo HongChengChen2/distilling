@@ -110,8 +110,11 @@ def main():
 	test_acc0 = validate(val_loader, big_model, criterion)
 
     ##################
-	small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
-		conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
+	#small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
+	#	conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
+	small_model = models.alexnet(pretrained=False)
+	#model.features = torch.nn.DataParallel(model.features)
+    #model.cuda()
 
 	train(big_model, small_model, args)
 

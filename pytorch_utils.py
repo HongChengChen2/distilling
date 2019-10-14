@@ -307,8 +307,8 @@ def train_epoch(train_loader, big_model, small_model, T, criterion, optimizer, e
         #logits_small_var = torch.autograd.Variable(torch.div(logits_small.data, T).cuda())
         #logits_big_var = torch.autograd.Variable(torch.div(logits_big.data, T).cuda())
 
-        soft_logits_small = Softmax()(logits_small * 1.0/T) 
-        soft_logits_big = Softmax()(logits_big *1.0/T).detach()
+        soft_logits_small = Softmax(logits_small * 1.0/T ,dim = 1 ) 
+        soft_logits_big = Softmax(logits_big *1.0/T ,dim =1 ).detach()
 
         loss_soft = torch.nn.BCELoss().cuda()(soft_logits_small, soft_logits_big)
 
