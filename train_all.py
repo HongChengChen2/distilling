@@ -68,6 +68,10 @@ def main():
 
 	big_model = pytorch_models['resnet18']
 
+	for p in big_model.parameters():
+		p.requires_grad=False
+		p.cuda(args.gpu)
+		
 	if args.model.startswith('trn'):
 		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
 			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
@@ -78,8 +82,9 @@ def main():
 		big_model = big_model.cuda(args.gpu) 
 		num_ftrs = big_model.fc.in_features
 		big_model.fc = nn.Linear(num_ftrs, 4)
+
 		small_model = small_model.cuda(args.gpu) 
-		
+
 	else:
 		big_model = torch.nn.DataParallel(big_model).cuda()
 		num_ftrs = big_model.module.fc.in_features
@@ -93,9 +98,6 @@ def main():
 		else:
 			small_model = torch.nn.DataParallel(small_model).cuda()
 
-	for p in big_model.parameters():
-		p.requires_grad=False
-		p.cuda(args.gpu)
 
     ##################
 	
