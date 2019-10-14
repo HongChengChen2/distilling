@@ -44,7 +44,7 @@ parser.add_argument('--epochs', default=10, type=int, metavar='N',
 
 def main():
   
-	global parse_args
+	global args
 	args = parser.parse_args()
 	pytorch_models = {
     	'resnet18': models.resnet18(pretrained=True),
