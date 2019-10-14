@@ -321,7 +321,7 @@ def train_epoch(train_loader, big_model, small_model, T, criterion, optimizer, e
         prec1 = pytorch_accuracy(logits_small.data, class_target)
         #f1score1 = pytorch_f1(output.data, target)
 
-        losses.update(loss.data[0], inp.size(0))
+        losses.update(loss.data[0], inp.size(0).item())
         top1_acc.update(prec1[0][0], inp.size(0))
         #top1_f1.update(f1score1[0], inp.size(0))
 
