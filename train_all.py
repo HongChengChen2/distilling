@@ -82,25 +82,21 @@ def main():
 			y = y.cuda(args.gpu, non_blocking=True)
 			
 			out = big_model(data)
+			loss=criterion(out,y)
+			optimizer.zero_grad()
+			loss.backward()
+			optimizer.step()
+			print('loss:',loss,loss.item())
 
-            #print(out)
-            loss=criterion(out,y)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            print('loss:',loss,loss.item())
+	big_model.train(False)
 
-    big_model.train(False)
-
-    test_acc0 = validate(val_loader, big_model, criterion)
+	test_acc0 = validate(val_loader, big_model, criterion)
 
     ##################
-    small_model = pytorch_resnet.rn_builder(name_to_params[args.model],
-                                            num_classes=4, 
-                                            conv1_size=3, conv1_pad=1, nbf=16,
-                                            downsample_start=False)
-
-    train(big_model, small_model, args)
+	small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
+		conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
+	
+	train(big_model, small_model, args)
 
 
 def load_all_data(path):
