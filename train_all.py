@@ -83,7 +83,7 @@ def main():
             #y=Variable(y,requires_grad=True)
 
 			#if args.gpu is not None:
-				
+			print("gpu:",args.gpu)
 			data = data.cuda(args.gpu, non_blocking=True)
 			y = y.cuda(args.gpu, non_blocking=True)
 			
