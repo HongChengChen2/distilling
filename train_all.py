@@ -114,9 +114,9 @@ def main():
 	#	conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
 	small_model = models.alexnet(pretrained=False)
 	small_model.features = torch.nn.DataParallel(small_model.features)
-    small_model.cuda()
-    num_ftrs = small_model.classifier[6].in_features
-    small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+	small_model.cuda()
+	num_ftrs = small_model.classifier[6].in_features
+	small_model.classifier[6] = nn.Linear(num_ftrs, 4)
 
 	train(big_model, small_model, args)
 
