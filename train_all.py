@@ -66,7 +66,7 @@ def main():
     		('trn34', [3, 4, 6, 3])]
 	name_to_params = dict(model_params)
 
-	big_model = pytorch_models['resnet18']
+	big_model = pytorch_models['resnet50']
 
 	if args.model.startswith('trn'):
 		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
