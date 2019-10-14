@@ -65,24 +65,23 @@ def main():
 
     ##################
 	num_ftrs = big_model.fc.in_features
-	big_model.fc = nn.Linear(num_ftrs, 4) #only train the last layer
-    
- 	optimizer = optim.Adam(big_model.parameters(),lr=0.001)
-   	train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
-
-    big_model.train(True)
-    big_model.cuda(args.gpu)
-    for epoch in range(0, args.epochs):
-        print("===epoc===%d"%epoch)
-        for i,(data,y) in enumerate(train_loader):
-            data=Variable(data,requires_grad=True)
+	big_model.fc = nn.Linear(num_ftrs, 4)
+	optimizer = optim.Adam(big_model.parameters(),lr=0.001)
+	train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
+	
+	big_model.train(True)
+	big_model.cuda(args.gpu)
+	for epoch in range(0, args.epochs):
+		print("===epoc===%d"%epoch)
+		for i,(data,y) in enumerate(train_loader):
+			data=Variable(data,requires_grad=True)
             #y=Variable(y,requires_grad=True)
 
-            if args.gpu is not None:
-                data = data.cuda(args.gpu, non_blocking=True)
-            y = y.cuda(args.gpu, non_blocking=True)
-
-            out = big_model(data)
+			if args.gpu is not None:
+				data = data.cuda(args.gpu, non_blocking=True)
+			y = y.cuda(args.gpu, non_blocking=True)
+			
+			out = big_model(data)
 
             #print(out)
             loss=criterion(out,y)
