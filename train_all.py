@@ -133,7 +133,7 @@ def load_all_data(path):
 def train(big_model, small_model, args):
 
     RESOL = args.resol
-    NB_CLASSES = 1000
+    NB_CLASSES = 4
     print("Loading images...")
     #train_fnames = load_all_data(TRAIN_PATH)
     #val_fnames = load_all_data(VAL_PATH)
@@ -194,8 +194,6 @@ def validate(val_loader, model, criterion):
             loss = criterion(output, target)
 
             prec1 = accuracy(output, target)
-            print("prec1",prec1)
-            print("prec1[0]",prec1[0])
             losses.update(loss.item(), input.size(0))
             top1.update(prec1[0], input.size(0))
 
