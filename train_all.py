@@ -69,7 +69,7 @@ def main():
 	if args.model.startswith('trn'):
 		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
 			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
-	else
+	else:
 		small_model = models.__dict__[args.model]()
 
 	if args.gpu is not None:
