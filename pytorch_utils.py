@@ -365,6 +365,8 @@ def trainer(big_model, small_model, T, criterion, optimizer, scheduler,
 
     best_loss = (float('Inf'), -1)
     best_acc = (0, -1)
+    print("best_acc",best_acc)
+    print("best_acc_type",type(best_acc))
 
     last_update = -1
     pbar = tqdm.tqdm(range(nb_epochs))
