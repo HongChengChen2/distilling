@@ -195,8 +195,9 @@ def validate(val_loader, model, criterion):
 
             prec1 = accuracy(output, target)
             print("prec1",prec1)
+            print("prec1[0]",prec1[0])
             losses.update(loss.item(), input.size(0))
-            top1.update(prec1, input.size(0))
+            top1.update(prec1[0], input.size(0))
 
             # measure elapsed time
             batch_time.update(time.time() - end)
