@@ -45,12 +45,13 @@ def main():
 	args = parser.parse_args()
 
     pytorch_models = {
-        'resnet18': models.resnet18(pretrained=True),
-        'resnet34': models.resnet34(pretrained=True),
-        'resnet50': models.resnet50(pretrained=True),
-        'resnet101': models.resnet101(pretrained=True),
-        'resnet152': models.resnet152(pretrained=True)
+    	'resnet18': models.resnet18(pretrained=True),
+    	'resnet34': models.resnet34(pretrained=True),
+    	'resnet50': models.resnet50(pretrained=True),
+    	'resnet101': models.resnet101(pretrained=True),
+    	'resnet152': models.resnet152(pretrained=True)
     }
+        
     model_params = [
             ('trn2', []),
             ('trn4', [1]),
