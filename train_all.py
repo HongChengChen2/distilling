@@ -40,7 +40,8 @@ parser.add_argument('--gpu', default=None, type=int,
                 help='GPU id to use.')  
 parser.add_argument('--epochs', default=10, type=int, metavar='N',
                     help='number of total epochs to run')
-
+parser.add_argument('--print-freq', '-p', default=1, type=int,
+                    metavar='N', help='print frequency (default: 1)')
 
 def main():
   
