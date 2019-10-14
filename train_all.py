@@ -6,6 +6,7 @@ import torch
 import pandas as pd
 import numpy as np
 import torch.nn as nn
+import torch.optim as optim
 import torchvision.transforms as transforms
 import torchvision.models as models
 #import torchsample
