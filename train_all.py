@@ -107,13 +107,13 @@ def main():
         num_ftrs = big_model.module.fc.in_features
         big_model.module.fc = nn.Linear(num_ftrs, 4)
 
-    if args.model.startswith('alexnet'):
-        small_model.features = torch.nn.DataParallel(small_model.features)
-        small_model.cuda()
-        num_ftrs = small_model.classifier[6].in_features
-        small_model.classifier[6] = nn.Linear(num_ftrs, 4)
-    else:
-        small_model = torch.nn.DataParallel(small_model).cuda()
+        if args.model.startswith('alexnet') or args.model.startswith('vgg'):
+            small_model.features = torch.nn.DataParallel(small_model.features)
+            small_model.cuda()
+            num_ftrs = small_model.classifier[6].in_features
+            small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+        else:
+            small_model = torch.nn.DataParallel(small_model).cuda()
 
 
      ##################
@@ -128,7 +128,7 @@ def main():
         checkpoint = torch.load(checkpoint_path).get('state_dict')
         big_model.load_state_dict(checkpoint)
         big_model.cuda(args.gpu)
-        
+
     else:
         optimizer = optim.Adam(big_model.parameters(),lr=0.001)
 

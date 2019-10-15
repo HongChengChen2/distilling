@@ -450,9 +450,7 @@ def get_small_datasets(datatype='' ,CLASS_NAMES=None,
         transforms.Normalize(mean = [ 0.485, 0.456, 0.406 ], std = [ 0.229, 0.224, 0.225 ]),
         ])
     train_path = os.path.join(ori_path,datatype,'train/')
-    print(train_path)
-    print(ori_path)
-    print(datatype)
+
     train_dataset = torchvision.datasets.ImageFolder( train_path , train_transform)
     val_dataset = torchvision.datasets.ImageFolder(os.path.join(ori_path, datatype,'val/'), val_transform)
     train_loader = torch.utils.data.DataLoader(
