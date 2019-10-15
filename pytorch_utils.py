@@ -287,7 +287,7 @@ def pytorch_accuracy(output, target, topk=(1,)):
         res.append(correct_k.mul_(100.0 / batch_size))
     return res
 
-def train_epoch(train_loader, big_model, small_model, T, criterion, optimizer, epoch, loss_weight=0.8):
+def train_epoch(train_loader, big_model, small_model, T, criterion, optimizer, epoch, loss_weight=0):
     big_model.eval()
     big_model.cuda()
     small_model.train()
