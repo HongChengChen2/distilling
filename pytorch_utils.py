@@ -15,12 +15,6 @@ import torch.nn.functional as F
 
 ori_path = "/home/leander/hcc/distilling/"
 
-BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
-SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
-#TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
-BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
-SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
-#VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
 
 class _LRScheduler(object):
     def __init__(self, optimizer, last_epoch=-1):
@@ -407,6 +401,14 @@ def get_datasets(CLASS_NAMES=None,
                  batch_size=32, num_workers=16,
                  use_rotate=False):
 
+        
+    BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
+    SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
+    #TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
+    BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
+    SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
+    #VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
+    
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(RESOL),
         transforms.RandomHorizontalFlip(),
