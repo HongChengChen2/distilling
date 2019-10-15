@@ -13,6 +13,7 @@ import torchvision.models as models
 #import torchsample
 from PIL import Image
 from torch.autograd import Variable
+from collections import OrderedDict
 
 #import imagenet_utils
 #import common
@@ -126,8 +127,16 @@ def main():
         print('==> Resuming from checkpoint..')
         assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
         checkpoint = torch.load(checkpoint_path).get('state_dict')
-        big_model.load_state_dict(checkpoint)
-        big_model.cuda(args.gpu)
+        
+        if args.gpu is not None:
+            new_checkpoint = OrderedDict()
+            for k, v in checkpoint.items():
+                name = k.replace(".module", "") # removing ‘.moldule’ from key
+                new_checkpoint[name]=v
+
+        else:
+            big_model.load_state_dict(checkpoint)
+            big_model.cuda(args.gpu)
 
     else:
         optimizer = optim.Adam(big_model.parameters(),lr=0.001)
