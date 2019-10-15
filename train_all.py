@@ -45,116 +45,118 @@ ori_path = "/home/leander/hcc/distilling/"
 
 def main():
   
-	global args	
-	args = parser.parse_args()
+    global args	
+    args = parser.parse_args()
 
-	BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
-	SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
-	#TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
-	BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
-	SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
+    BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
+    SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
+    #TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
+    BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
+    SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
 #VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
 
-	pytorch_models = {
-    	'resnet18': models.resnet18(pretrained=True),
-    	'resnet34': models.resnet34(pretrained=True),
-    	'resnet50': models.resnet50(pretrained=True),
-    	'resnet101': models.resnet101(pretrained=True),
-    	'resnet152': models.resnet152(pretrained=True)
+    pytorch_models = {
+        'resnet18': models.resnet18(pretrained=True),
+        'resnet34': models.resnet34(pretrained=True),
+        'resnet50': models.resnet50(pretrained=True),
+        'resnet101': models.resnet101(pretrained=True),
+        'resnet152': models.resnet152(pretrained=True)
     }
-	model_params = [
-    		('trn2', []),
-    		('trn4', [1]),
-    		('trn6', [1, 1]),
-    		('trn8', [1, 1, 1]),
-    		('trn10', [1, 1, 1, 1]),
-    		('trn18', [2, 2, 2, 2]),
-    		('trn34', [3, 4, 6, 3])]
-	name_to_params = dict(model_params)
 
-	big_model = pytorch_models['resnet18']
+    model_params = [
+            ('trn2', []),
+            ('trn4', [1]),
+            ('trn6', [1, 1]),
+            ('trn8', [1, 1, 1]),
+            ('trn10', [1, 1, 1, 1]),
+            ('trn18', [2, 2, 2, 2]),
+            ('trn34', [3, 4, 6, 3])]
+    name_to_params = dict(model_params)
 
-	for p in big_model.parameters():
-		p.requires_grad=False
-		p.cuda(args.gpu)
+    big_model = pytorch_models['resnet18']
 
-	if args.model.startswith('trn'):
-		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
-			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
-	elif args.model.startswith('lenet'):
+    for p in big_model.parameters():
+        p.requires_grad=False
+        p.cuda(args.gpu)
+
+    if args.model.startswith('trn'):
+        small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
+        conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
+    elif args.model.startswith('lenet'):
         #small_model = lenet.lenet_builder()
-		pass
-	else:
-		small_model = models.__dict__[args.model]()
+        pass
+    else:
+        small_model = models.__dict__[args.model]()
 
-	if args.gpu is not None:
-		big_model = big_model.cuda(args.gpu) 
-		num_ftrs = big_model.fc.in_features
-		big_model.fc = nn.Linear(num_ftrs, 4)
-		
-		if args.model.startswith('alexnet') or args.model.startswith('vgg'):
-			small_model = small_model.cuda(args.gpu)
-			small_model.cuda()
-			num_ftrs = small_model.classifier[6].in_features
-			small_model.classifier[6] = nn.Linear(num_ftrs, 4)
-			print("ok")
-		else:
-			small_model = small_model.cuda(args.gpu) 
+    if args.gpu is not None:
+        big_model = big_model.cuda(args.gpu) 
+        num_ftrs = big_model.fc.in_features
+        big_model.fc = nn.Linear(num_ftrs, 4)
 
-	else:
-		big_model = torch.nn.DataParallel(big_model).cuda()
-		num_ftrs = big_model.module.fc.in_features
-		big_model.module.fc = nn.Linear(num_ftrs, 4)
+        if args.model.startswith('alexnet') or args.model.startswith('vgg'):
+            small_model = small_model.cuda(args.gpu)
+            small_model.cuda()
+            num_ftrs = small_model.classifier[6].in_features
+            small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+            print("ok")
+        else:
+            small_model = small_model.cuda(args.gpu) 
 
-		if args.model.startswith('alexnet'):
-			small_model.features = torch.nn.DataParallel(small_model.features)
-			small_model.cuda()
-			num_ftrs = small_model.classifier[6].in_features
-			small_model.classifier[6] = nn.Linear(num_ftrs, 4)
-		else:
-			small_model = torch.nn.DataParallel(small_model).cuda()
-    
-    train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
+    else:
+        big_model = torch.nn.DataParallel(big_model).cuda()
+        num_ftrs = big_model.module.fc.in_features
+        big_model.module.fc = nn.Linear(num_ftrs, 4)
+
+    if args.model.startswith('alexnet'):
+        small_model.features = torch.nn.DataParallel(small_model.features)
+        small_model.cuda()
+        num_ftrs = small_model.classifier[6].in_features
+        small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+    else:
+        small_model = torch.nn.DataParallel(small_model).cuda()
+
 
      ##################
 
-	if args.resume is not None:
-		checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
-		print('==> Resuming from checkpoint..')
-		assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
-		checkpoint = torch.load(checkpoint_path).get('state_dict')
-		big_model.load_state_dict(checkpoint)
-	else:
-		optimizer = optim.Adam(big_model.parameters(),lr=0.001)
-		criterion = nn.CrossEntropyLoss().cuda(args.gpu)
+    train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
 
-		big_model.train(True)
-		big_model.cuda(args.gpu)
-		for epoch in range(0, args.epochs):
-			print("===epoc===%d"%epoch)
-			for i,(data,y) in enumerate(train_loader):
-				data=Variable(data,requires_grad=True)
-				#y=Variable(y,requires_grad=True)
+    if args.resume is not None:
+        checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
+        print('==> Resuming from checkpoint..')
+        assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
+        checkpoint = torch.load(checkpoint_path).get('state_dict')
+        big_model.load_state_dict(checkpoint)
+    else:
+        optimizer = optim.Adam(big_model.parameters(),lr=0.001)
+        criterion = nn.CrossEntropyLoss().cuda(args.gpu)
 
-				#if args.gpu is not None:
-				data = data.cuda(args.gpu, non_blocking=True)
-				y = y.cuda(args.gpu, non_blocking=True)
+        big_model.train(True)
+        big_model.cuda(args.gpu)
+        for epoch in range(0, args.epochs):
+            print("===epoc===%d"%epoch)
+            for i,(data,y) in enumerate(train_loader):
+                data=Variable(data,requires_grad=True)
+                #y=Variable(y,requires_grad=True)
 
-				out = big_model(data)
-				loss=criterion(out,y)
-				optimizer.zero_grad()
-				loss.backward()
-				optimizer.step()
-				print('loss:',loss,loss.item())
-		big_model.train(False)
-		torch.save({'state_dict': big_model.state_dict()}, 'bigmodel.tar')
+                #if args.gpu is not None:
+                data = data.cuda(args.gpu, non_blocking=True)
+                y = y.cuda(args.gpu, non_blocking=True)
 
-	test_acc0 = validate(val_loader, big_model, criterion)
+                out = big_model(data)
+                loss=criterion(out,y)
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                print('loss:',loss,loss.item())
+        big_model.train(False)
+        torch.save({'state_dict': big_model.state_dict()}, 'bigmodel.tar')
+
+    test_acc0 = validate(val_loader, big_model, criterion)
 
     ##################
 
 
-	train(big_model, small_model, args)
+    train(big_model, small_model, args)
 
 
 def load_all_data(path):
