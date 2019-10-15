@@ -118,7 +118,7 @@ def main():
 
     ##################
 
-	if args.resume :
+	if args.resume is not None:
 		checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
 		print('==> Resuming from checkpoint..')
 		assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
