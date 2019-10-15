@@ -43,16 +43,16 @@ parser.add_argument('--print-freq', '-p', default=1, type=int,
 
 ori_path = "/home/leander/hcc/distilling/"
 
-BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
-SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
-#TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
-BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
-SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
-#VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
-
 def main():
   
 	global args
+	BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
+	SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
+	#TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
+	BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
+	SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
+#VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
+
 	args = parser.parse_args()
 	pytorch_models = {
     	'resnet18': models.resnet18(pretrained=True),
