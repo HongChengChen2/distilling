@@ -127,6 +127,8 @@ def main():
         assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
         checkpoint = torch.load(checkpoint_path).get('state_dict')
         big_model.load_state_dict(checkpoint)
+        big_model.cuda(args.gpu)
+        
     else:
         optimizer = optim.Adam(big_model.parameters(),lr=0.001)
 
