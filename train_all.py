@@ -18,6 +18,7 @@ from torch.autograd import Variable
 #import common
 #from pretrained_utils import get_relevant_classes
 import pytorch_resnet
+import lenet
 from pytorch_utils import *
 import torch.utils.model_zoo as model_zoo
 import torch.nn.parallel
@@ -76,6 +77,9 @@ def main():
 	if args.model.startswith('trn'):
 		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
 			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
+    else if args.model.startswith('lenet'):
+:
+        small_model = lenet.lenet_builder()
 	else:
 		small_model = models.__dict__[args.model]()
 
@@ -85,10 +89,11 @@ def main():
 		big_model.fc = nn.Linear(num_ftrs, 4)
 		
 		if args.model.startswith('alexnet') or args.model.startswith('vgg'):
-			small_model = small_model.cuda(args.gpu) 
+			small_model = small_model.cuda(args.gpu)
 			small_model.cuda()
 			num_ftrs = small_model.classifier[6].in_features
 			small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+            print("ok")
 		else:
 			small_model = small_model.cuda(args.gpu) 
 
