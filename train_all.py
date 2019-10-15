@@ -82,8 +82,7 @@ def main():
 		big_model = big_model.cuda(args.gpu) 
 		num_ftrs = big_model.fc.in_features
 		big_model.fc = nn.Linear(num_ftrs, 4)
-
-        if args.model.startswith('alexnet') :
+        if args.model.startswith('alexnet'):
             small_model = small_model.cuda(args.gpu) 
             small_model.cuda()
             num_ftrs = small_model.classifier[6].in_features
