@@ -119,6 +119,7 @@ def main():
      ##################
 
     train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
+    criterion = nn.CrossEntropyLoss().cuda(args.gpu)
 
     if args.resume is not None:
         checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
@@ -128,7 +129,6 @@ def main():
         big_model.load_state_dict(checkpoint)
     else:
         optimizer = optim.Adam(big_model.parameters(),lr=0.001)
-        criterion = nn.CrossEntropyLoss().cuda(args.gpu)
 
         big_model.train(True)
         big_model.cuda(args.gpu)
