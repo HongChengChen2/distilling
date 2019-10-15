@@ -45,7 +45,9 @@ ori_path = "/home/leander/hcc/distilling/"
 
 def main():
   
-	global args
+	global args	
+	args = parser.parse_args()
+
 	BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
 	SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
 	#TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
@@ -53,7 +55,6 @@ def main():
 	SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
 #VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
 
-	args = parser.parse_args()
 	pytorch_models = {
     	'resnet18': models.resnet18(pretrained=True),
     	'resnet34': models.resnet34(pretrained=True),
