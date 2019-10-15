@@ -83,7 +83,6 @@ def main():
 		num_ftrs = big_model.fc.in_features
 		big_model.fc = nn.Linear(num_ftrs, 4)
 
-
         if args.model.startswith('alexnet') :
             small_model = small_model.cuda(args.gpu) 
             small_model.cuda()
