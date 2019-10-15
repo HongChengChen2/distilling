@@ -131,9 +131,9 @@ def main():
         if args.gpu is not None:
             new_checkpoint = OrderedDict()
             for k, v in checkpoint.items():
-                name = k.replace(".module", "") # removing ‘.moldule’ from key
+                name = k.replace("module.", "") # removing ‘.moldule’ from key
                 new_checkpoint[name]=v
-                
+
             big_model.load_state_dict(new_checkpoint)
             big_model.cuda(args.gpu)
 
