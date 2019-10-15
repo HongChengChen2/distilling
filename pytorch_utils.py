@@ -403,12 +403,10 @@ def get_datasets(CLASS_NAMES=None,
 
         
     BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
-    SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
     #TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
     BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
-    SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
     #VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
-    
+
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(RESOL),
         transforms.RandomHorizontalFlip(),
