@@ -122,7 +122,7 @@ def main():
 		checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
 		print('==> Resuming from checkpoint..')
 		assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
-		checkpoint = torch.load(checkpoint_path)
+		checkpoint = torch.load(checkpoint_path).get('state_dict')
 		big_model.load_state_dict(checkpoint)
 	else:
 		optimizer = optim.Adam(big_model.parameters(),lr=0.001)
