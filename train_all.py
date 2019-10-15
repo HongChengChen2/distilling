@@ -127,12 +127,15 @@ def main():
         print('==> Resuming from checkpoint..')
         assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
         checkpoint = torch.load(checkpoint_path).get('state_dict')
-        
+
         if args.gpu is not None:
             new_checkpoint = OrderedDict()
             for k, v in checkpoint.items():
                 name = k.replace(".module", "") # removing ‘.moldule’ from key
                 new_checkpoint[name]=v
+                
+            big_model.load_state_dict(new_checkpoint)
+            big_model.cuda(args.gpu)
 
         else:
             big_model.load_state_dict(checkpoint)
