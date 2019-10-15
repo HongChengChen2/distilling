@@ -80,7 +80,8 @@ def main():
 
 	if args.gpu is not None:
 		big_model = big_model.cuda(args.gpu) 
-		num_ftrs = big_model.fc.in_features
+		num_ftrs = big_model.fc.
+        print("ok")
 		big_model.fc = nn.Linear(num_ftrs, 4)
 
         if args.model.startswith('alexnet'):
