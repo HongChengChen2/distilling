@@ -83,7 +83,14 @@ def main():
 		num_ftrs = big_model.fc.in_features
 		big_model.fc = nn.Linear(num_ftrs, 4)
 
-		small_model = small_model.cuda(args.gpu) 
+
+        if args.model.startswith('alexnet') :
+            small_model = small_model.cuda(args.gpu) 
+            small_model.cuda()
+            num_ftrs = small_model.classifier[6].in_features
+            small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+        else:
+            small_model = small_model.cuda(args.gpu) 
 
 	else:
 		big_model = torch.nn.DataParallel(big_model).cuda()
