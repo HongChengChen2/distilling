@@ -29,7 +29,6 @@ import csv
 import sys
 
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', required=True, help="Small model")
 parser.add_argument('--data', required=True, help="a set of data") #data1 data2 data3
@@ -72,20 +71,20 @@ def main():
     		('trn34', [3, 4, 6, 3])]
 	name_to_params = dict(model_params)
 
-
 	big_model = pytorch_models['resnet18']
 
 	for p in big_model.parameters():
 		p.requires_grad=False
 		p.cuda(args.gpu)
-		
+
 	if args.model.startswith('trn'):
 		small_model = pytorch_resnet.rn_builder(name_to_params[args.model],num_classes=4,
 			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
-    else if args.model.startswith('lenet'):
+
+	else if args.model.startswith('lenet'):
         #small_model = lenet.lenet_builder()
 	else:
-		small_model = models.__dict__[args.model]()
+		small_model = models.__dict__[args.model]()        
 
 	if args.gpu is not None:
 		big_model = big_model.cuda(args.gpu) 
@@ -97,7 +96,7 @@ def main():
 			small_model.cuda()
 			num_ftrs = small_model.classifier[6].in_features
 			small_model.classifier[6] = nn.Linear(num_ftrs, 4)
-            print("ok")
+			print("ok")
 		else:
 			small_model = small_model.cuda(args.gpu) 
 
@@ -118,37 +117,36 @@ def main():
 
     ##################
 	if args.resume:
-        checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
-        print('==> Resuming from checkpoint..')
-        assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
-        checkpoint = torch.load(checkpoint_path)
-        big_model.load_state_dict(checkpoint)
-        
-    else:
-        optimizer = optim.Adam(big_model.parameters(),lr=0.001)
-        criterion = nn.CrossEntropyLoss().cuda(args.gpu)
-        train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
-        
-        big_model.train(True)
-        big_model.cuda(args.gpu)
-        for epoch in range(0, args.epochs):
-            print("===epoc===%d"%epoch)
-            for i,(data,y) in enumerate(train_loader):
-                data=Variable(data,requires_grad=True)
-                #y=Variable(y,requires_grad=True)
+		checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
+		print('==> Resuming from checkpoint..')
+		assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
+		checkpoint = torch.load(checkpoint_path)
+		big_model.load_state_dict(checkpoint)
+	else:
+		optimizer = optim.Adam(big_model.parameters(),lr=0.001)
+		criterion = nn.CrossEntropyLoss().cuda(args.gpu)
+		train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
 
-                #if args.gpu is not None:
-                data = data.cuda(args.gpu, non_blocking=True)
-                y = y.cuda(args.gpu, non_blocking=True)
-                
-                out = big_model(data)
-                loss=criterion(out,y)
-                optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
-                print('loss:',loss,loss.item())
-        big_model.train(False)
-        torch.save({'state_dict': big_model.state_dict()}, 'bigmodel.tar')
+		big_model.train(True)
+		big_model.cuda(args.gpu)
+		for epoch in range(0, args.epochs):
+			print("===epoc===%d"%epoch)
+			for i,(data,y) in enumerate(train_loader):
+				data=Variable(data,requires_grad=True)
+				#y=Variable(y,requires_grad=True)
+
+				#if args.gpu is not None:
+				data = data.cuda(args.gpu, non_blocking=True)
+				y = y.cuda(args.gpu, non_blocking=True)
+
+				out = big_model(data)
+				loss=criterion(out,y)
+				optimizer.zero_grad()
+				loss.backward()
+				optimizer.step()
+				print('loss:',loss,loss.item())
+		big_model.train(False)
+		torch.save({'state_dict': big_model.state_dict()}, 'bigmodel.tar')
 
 	test_acc0 = validate(val_loader, big_model, criterion)
 
