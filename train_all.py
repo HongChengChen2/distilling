@@ -127,8 +127,7 @@ def main():
         else:
             small_model = torch.nn.DataParallel(small_model).cuda()
 
-    #print("architecture of small_model:")
-    #print(small_model)
+
 
      ##################
      #fine tune big model for 4 classes
@@ -181,7 +180,8 @@ def main():
     test_acc0 = validate(val_loader, big_model, criterion)
 
     ##################
-
+    print("architecture of big_model:")
+    print(big_model)
 
     train(big_model, small_model, args)
 
