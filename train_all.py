@@ -18,7 +18,7 @@ from torch.autograd import Variable
 #import common
 #from pretrained_utils import get_relevant_classes
 import pytorch_resnet
-import lenet
+#import lenet
 from pytorch_utils import *
 import torch.utils.model_zoo as model_zoo
 import torch.nn.parallel
