@@ -340,8 +340,8 @@ def val_epoch(val_loader, model, criterion): #temperature 1
             #input_var = torch.autograd.Variable(inp, volatile=True)
             #target_var = torch.autograd.Variable(target_cuda, volatile=True)
 
-            output = model(input_var)
-            loss = criterion(output, target_var)
+            output = model(inp)
+            loss = criterion(output, target_cuda)
             prec1 = pytorch_accuracy(output.data, target_cuda)
             targets = np.append(targets, target.cpu().numpy())
             preds = np.append(preds, np.argmax(output.data.cpu().numpy(), axis=1))
