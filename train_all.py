@@ -127,8 +127,8 @@ def main():
         else:
             small_model = torch.nn.DataParallel(small_model).cuda()
 
-    print("architecture of small_model:")
-    print(small_model)
+    #print("architecture of small_model:")
+    #print(small_model)
 
      ##################
      #fine tune big model for 4 classes
