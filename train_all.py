@@ -82,8 +82,9 @@ def main():
 			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
 	elif args.model.startswith('lenet'):
         #small_model = lenet.lenet_builder()
+        pass
 	else:
-		small_model = models.__dict__[args.model]()        
+		small_model = models.__dict__[args.model]()
 
 	if args.gpu is not None:
 		big_model = big_model.cuda(args.gpu) 
