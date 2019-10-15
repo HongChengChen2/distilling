@@ -66,6 +66,7 @@ def main():
     		('trn34', [3, 4, 6, 3])]
 	name_to_params = dict(model_params)
 
+
 	big_model = pytorch_models['resnet18']
 
 	for p in big_model.parameters():
@@ -81,16 +82,15 @@ def main():
 	if args.gpu is not None:
 		big_model = big_model.cuda(args.gpu) 
 		num_ftrs = big_model.fc.in_features
-        print("ok")
 		big_model.fc = nn.Linear(num_ftrs, 4)
-
-        if args.model.startswith('alexnet'):
-            small_model = small_model.cuda(args.gpu) 
-            small_model.cuda()
-            num_ftrs = small_model.classifier[6].in_features
-            small_model.classifier[6] = nn.Linear(num_ftrs, 4)
-        else:
-            small_model = small_model.cuda(args.gpu) 
+		
+		if args.model.startswith('alexnet'):
+			small_model = small_model.cuda(args.gpu) 
+			small_model.cuda()
+			num_ftrs = small_model.classifier[6].in_features
+			small_model.classifier[6] = nn.Linear(num_ftrs, 4)
+		else:
+			small_model = small_model.cuda(args.gpu) 
 
 	else:
 		big_model = torch.nn.DataParallel(big_model).cuda()
@@ -104,6 +104,7 @@ def main():
 			small_model.classifier[6] = nn.Linear(num_ftrs, 4)
 		else:
 			small_model = torch.nn.DataParallel(small_model).cuda()
+
 
 
     ##################
@@ -251,3 +252,4 @@ def accuracy(output, target):
 
 if __name__ =='__main__':
     main()
+			
