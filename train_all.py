@@ -35,7 +35,7 @@ parser.add_argument('--data', required=True, help="a set of data") #data1 data2 
 parser.add_argument('--resol', default=224, type=int, help="Resolution")
 parser.add_argument('--temp', required=True, help="Softmax temperature")
 parser.add_argument('--gpu', default=None, type=int,help='GPU id to use.')  
-parser.add_argument('--resume', default=None, type='',help='resume bigmodel.')  
+parser.add_argument('--resume', default=None, type=int ,help='resume bigmodel.')  
 parser.add_argument('--epochs', default=30, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--print-freq', '-p', default=1, type=int,
