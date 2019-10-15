@@ -82,7 +82,7 @@ def main():
 			conv1_size=3, conv1_pad=1, nbf=16,downsample_start=False)
 	elif args.model.startswith('lenet'):
         #small_model = lenet.lenet_builder()
-        pass
+		pass
 	else:
 		small_model = models.__dict__[args.model]()
 
