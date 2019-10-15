@@ -6,6 +6,8 @@ import time
 import torch
 import pandas as pd
 import numpy as np
+import torchsnooper
+import torchsummary
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.transforms as transforms
@@ -125,9 +127,11 @@ def main():
         else:
             small_model = torch.nn.DataParallel(small_model).cuda()
 
+    print("architecture of small_model:")
+    print(small_model)
 
      ##################
-
+     #fine tune big model for 4 classes
     train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
     criterion = nn.CrossEntropyLoss().cuda(args.gpu)
 
