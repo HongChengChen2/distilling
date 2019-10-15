@@ -28,23 +28,28 @@ import random
 import csv
 import sys
 
-data_path = "/home/leander/hcc/prunWeight/data4"
 
-TRAIN_PATH = os.path.join(data_path, 'train/')
-#TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
-VAL_PATH = os.path.join(data_path, 'val/')
-#VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', required=True, help="Small model")
+parser.add_argument('--data', required=True, help="a set of data") #data1 data2 data3
 parser.add_argument('--resol', default=224, type=int, help="Resolution")
 parser.add_argument('--temp', required=True, help="Softmax temperature")
-parser.add_argument('--gpu', default=None, type=int,
-                help='GPU id to use.')  
+parser.add_argument('--gpu', default=None, type=int,help='GPU id to use.')  
+parser.add_argument('--resume', default=True, type=bool,help='GPU id to use.')  
 parser.add_argument('--epochs', default=30, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--print-freq', '-p', default=1, type=int,
                     metavar='N', help='print frequency (default: 1)')
+
+ori_path = "/home/leander/hcc/distilling/"
+
+BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
+SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
+#TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
+BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
+SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
+#VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
 
 def main():
   
@@ -113,31 +118,38 @@ def main():
 
 
     ##################
-	
-	optimizer = optim.Adam(big_model.parameters(),lr=0.001)
-	criterion = nn.CrossEntropyLoss().cuda(args.gpu)
-	train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
-	
-	big_model.train(True)
-	big_model.cuda(args.gpu)
-	for epoch in range(0, args.epochs):
-		print("===epoc===%d"%epoch)
-		for i,(data,y) in enumerate(train_loader):
-			data=Variable(data,requires_grad=True)
-            #y=Variable(y,requires_grad=True)
+	if args.resume:
+        checkpoint_path = os.path.join(ori_path, 'bigmodel.tar')
+        print('==> Resuming from checkpoint..')
+        assert os.path.isfile(checkpoint_path), 'Error: no checkpoint directory found!'
+        checkpoint = torch.load(checkpoint_path)
+        big_model.load_state_dict(checkpoint)
+        
+    else:
+        optimizer = optim.Adam(big_model.parameters(),lr=0.001)
+        criterion = nn.CrossEntropyLoss().cuda(args.gpu)
+        train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
+        
+        big_model.train(True)
+        big_model.cuda(args.gpu)
+        for epoch in range(0, args.epochs):
+            print("===epoc===%d"%epoch)
+            for i,(data,y) in enumerate(train_loader):
+                data=Variable(data,requires_grad=True)
+                #y=Variable(y,requires_grad=True)
 
-			#if args.gpu is not None:
-			data = data.cuda(args.gpu, non_blocking=True)
-			y = y.cuda(args.gpu, non_blocking=True)
-			
-			out = big_model(data)
-			loss=criterion(out,y)
-			optimizer.zero_grad()
-			loss.backward()
-			optimizer.step()
-			print('loss:',loss,loss.item())
-
-	big_model.train(False)
+                #if args.gpu is not None:
+                data = data.cuda(args.gpu, non_blocking=True)
+                y = y.cuda(args.gpu, non_blocking=True)
+                
+                out = big_model(data)
+                loss=criterion(out,y)
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+                print('loss:',loss,loss.item())
+        big_model.train(False)
+        torch.save({'state_dict': big_model.state_dict()}, 'bigmodel.tar')
 
 	test_acc0 = validate(val_loader, big_model, criterion)
 
@@ -178,7 +190,7 @@ def train(big_model, small_model, args):
 
     SMALL_MODEL_NAME = args.model
     TEMPERATURE = int(args.temp)
-    train_loader, val_loader = get_datasets()#train_fnames, val_fnames)
+    train_loader, val_loader = get_small_datasets(datatype=args.data)#train_fnames, val_fnames)
     s1 = '%s-%d-%d-epoch{epoch:02d}-sgd-cc.t7' % (SMALL_MODEL_NAME, TEMPERATURE, RESOL)
     s2 = '%s-%d-%d-best-sgd-cc.t7' % (SMALL_MODEL_NAME, TEMPERATURE, RESOL)
 

@@ -13,11 +13,13 @@ from torch.optim import Optimizer
 from bisect import bisect_right
 import torch.nn.functional as F
 
-data_path = "/home/leander/hcc/prunWeight/data4"
+ori_path = "/home/leander/hcc/distilling/"
 
-TRAIN_PATH = os.path.join(data_path, 'train/')
+BIG_TRAIN_PATH = os.path.join(ori_path, 'data4/train/')
+SMALL_TRAIN_PATH = os.path.join(ori_path, args.data,'/train/')
 #TRAIN_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_train"
-VAL_PATH = os.path.join(data_path, 'val/')
+BIG_VAL_PATH = os.path.join(ori_path, 'data4/val/')
+SMALL_VAL_PATH = os.path.join(ori_path, args.data, '/val/')
 #VAL_PATH = "/lfs/raiders3/1/ddkang/imagenet/ilsvrc2012/ILSVRC2012_img_val"
 
 class _LRScheduler(object):
@@ -383,12 +385,13 @@ def trainer(big_model, small_model, T, criterion, optimizer, scheduler,
         if val_acc > best_acc[0]:
             best_acc = (val_acc, epoch)
             last_update = epoch
-            torch.save({'state_dict': small_model.state_dict(), 'acc': val_acc}, model_best_name)
+            #torch.save({'state_dict': small_model.state_dict(), 'acc': val_acc}, model_best_name)
             
+        '''
         if epoch % save_every == 0:
             fname = model_ckpt_name.format(epoch=epoch)
             torch.save({'state_dict': small_model.state_dict()}, fname)
-
+        '''
         if epoch - last_update > patience:
             break
 
@@ -403,51 +406,7 @@ def get_datasets(CLASS_NAMES=None,
                  normalize=None, RESOL=224,
                  batch_size=32, num_workers=16,
                  use_rotate=False):
-    #NB_CLASSES = len(train_fnames)
-    #assert NB_CLASSES == len(val_fnames)
-    '''
-    if normalize is None:
-        normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                         std=[0.229, 0.224, 0.225])
-    if CLASS_NAMES is None:
-        CLASS_NAMES = map(str, range(NB_CLASSES))
 
-    train_imgs = sum(map(lambda x: zip(x[0], itertools.repeat(x[1])),
-                         zip(train_fnames, range(NB_CLASSES))), [])
-    val_imgs = sum(map(lambda x: zip(x[0], itertools.repeat(x[1])),
-                       zip(val_fnames, range(NB_CLASSES))), [])
-
-    if use_rotate:
-        rotation = [RandomRotate(20)]
-    else:
-        rotation = []
-
-    train_dataset = ImageList(
-            CLASS_NAMES, train_imgs,
-            transforms.Compose(rotation + [
-                    transforms.RandomSizedCrop(RESOL),
-                    transforms.RandomHorizontalFlip(),
-                    transforms.ToTensor(),
-                    normalize,
-            ]))
-    val_dataset = ImageList(
-            CLASS_NAMES, val_imgs,
-            transforms.Compose([
-                    transforms.Scale(int(256.0 / 224.0 * RESOL)),
-                    transforms.CenterCrop(RESOL),
-                    transforms.ToTensor(),
-                    normalize,
-            ]))
-
-    train_loader = torch.utils.data.DataLoader(
-            train_dataset,
-            batch_size=batch_size, num_workers=num_workers,
-            shuffle=True, pin_memory=True)
-    val_loader = torch.utils.data.DataLoader(
-            val_dataset,
-            batch_size=batch_size, num_workers=num_workers,
-            shuffle=False, pin_memory=True)
-    '''
     train_transform = transforms.Compose([
         transforms.RandomResizedCrop(RESOL),
         transforms.RandomHorizontalFlip(),
@@ -461,8 +420,38 @@ def get_datasets(CLASS_NAMES=None,
         transforms.Normalize(mean = [ 0.485, 0.456, 0.406 ], std = [ 0.229, 0.224, 0.225 ]),
         ])
 
-    train_dataset = torchvision.datasets.ImageFolder(TRAIN_PATH, train_transform)
-    val_dataset = torchvision.datasets.ImageFolder(VAL_PATH, val_transform)
+    big_train_dataset = torchvision.datasets.ImageFolder(BIG_TRAIN_PATH, train_transform)
+    big_val_dataset = torchvision.datasets.ImageFolder(BIG_VAL_PATH, val_transform)
+    big_train_loader = torch.utils.data.DataLoader(
+            big_train_dataset,
+            batch_size=batch_size, num_workers=num_workers,
+            shuffle=True, pin_memory=True)
+    big_val_loader = torch.utils.data.DataLoader(
+            big_val_dataset,
+            batch_size=batch_size, num_workers=num_workers,
+            shuffle=False, pin_memory=True)
+    return big_train_loader, big_val_loader
+
+def get_small_datasets(datatype='' ,CLASS_NAMES=None,
+                 normalize=None, RESOL=224,
+                 batch_size=32, num_workers=16,
+                 use_rotate=False):
+
+    train_transform = transforms.Compose([
+        transforms.RandomResizedCrop(RESOL),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean = [ 0.485, 0.456, 0.406 ], std = [ 0.229, 0.224, 0.225 ]),
+        ])
+    val_transform = transforms.Compose([
+        transforms.Resize(int(256.0 / 224.0 * RESOL)),
+        transforms.CenterCrop(RESOL),
+        transforms.ToTensor(),
+        transforms.Normalize(mean = [ 0.485, 0.456, 0.406 ], std = [ 0.229, 0.224, 0.225 ]),
+        ])
+
+    train_dataset = torchvision.datasets.ImageFolder(os.path.join(ori_path, datatype,'/train/'), train_transform)
+    val_dataset = torchvision.datasets.ImageFolder(os.path.join(ori_path, datatype,'/val/'), val_transform)
     train_loader = torch.utils.data.DataLoader(
             train_dataset,
             batch_size=batch_size, num_workers=num_workers,
